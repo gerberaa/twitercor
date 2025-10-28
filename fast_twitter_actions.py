@@ -96,25 +96,22 @@ class FastTwitterActionsAPI:
             "variables": variables,
             "features": GQL_FEATURES,
         }
-        
-        # Використовуємо проксі для безпеки акаундів
-        async with httpx.AsyncClient(proxies=self.proxy, timeout=30.0) as client:
-            try:
+
+        # Використовуємо проксі для безпеки акаунтів
+        try:
+            async with httpx.AsyncClient(proxy=self.proxy, timeout=30.0) as client:
                 response = await client.post(url, headers=headers, json=data)
-                
                 if self.debug:
                     print(f"🔗 Request to {operation}: {response.status_code}")
-                    
                 if response.status_code == 200:
                     result = response.json()
                     return result
                 else:
                     print(f"❌ Request failed: {response.status_code} - {response.text}")
                     return None
-                    
-            except Exception as e:
-                print(f"❌ Request error: {e}")
-                return None
+        except Exception as e:
+            print(f"❌ Request error: {e}")
+            return None
     
     async def like_tweet(self, tweet_id: str) -> bool:
         """Лайкнути твіт"""
