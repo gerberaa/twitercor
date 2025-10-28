@@ -349,6 +349,8 @@ Drop a Twitter/X link and watch the magic happen! ✨
             return
         
         for url in twitter_urls:
+            # Notify user that the link is queued for processing
+            await update.message.reply_text(f"🔔 Посилання додано в чергу на накрутку: {url}")
             await self.process_tweet_from_message(update, url, manual=False)
 
     async def process_tweet_from_message(self, update: Update, tweet_url: str, manual: bool = False):

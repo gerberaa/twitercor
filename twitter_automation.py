@@ -17,9 +17,40 @@ from twscrape.queue_client import QueueClient
 from twscrape.utils import encode_params
 from twitter_actions import TwitterActionsAPI
 from fast_twitter_actions import FastTwitterActionsAPI
+from playwright.async_api import async_playwright
 
 
 class TwitterInteractionAPI:
+    async def fake_view_tweet(self, tweet_id: str, username: str = None) -> bool:
+        """Імітує перегляд твіта через GET-запит на сторінку твіта."""
+        try:
+            # Визначаємо username акаунта
+            if username:
+                account_proxy = self.get_account_proxy(username)
+                account = await self.pool.get_account(username)
+            else:
+                account_proxy = None
+                account = None
+            # Формуємо URL твіта
+            tweet_url = f"https://x.com/i/web/status/{tweet_id}"
+            import httpx
+            headers = {
+                "User-Agent": account.user_agent if account and hasattr(account, "user_agent") else "Mozilla/5.0",
+                "Accept": "text/html,application/xhtml+xml,application/xml",
+                "Accept-Language": "en-US,en;q=0.9",
+            }
+            cookies = account.cookies if account else {}
+            async with httpx.AsyncClient(proxies=account_proxy, headers=headers, cookies=cookies, timeout=20.0) as client:
+                response = await client.get(tweet_url)
+                if response.status_code == 200:
+                    print(f"✅ Перегляд твіта {tweet_id} акаунтом @{username}")
+                    return True
+                else:
+                    print(f"❌ Не вдалося переглянути твіт {tweet_id} акаунтом @{username}: {response.status_code}")
+                    return False
+        except Exception as e:
+            print(f"❌ Помилка перегляду твіта {tweet_id} акаунтом @{username}: {e}")
+            return False
     def __init__(self, api: API):
         self.api = api
         self.pool = api.pool
@@ -214,6 +245,31 @@ class TwitterInteractionAPI:
             
         return None
 
+    async def playwright_view_tweet(self, tweet_id: str, username: str = None) -> bool:
+        """Імітує перегляд твіта через Playwright з авторизацією і проксі."""
+        try:
+            tweet_url = f"https://x.com/i/web/status/{tweet_id}"
+            account_proxy = self.get_account_proxy(username) if username else None
+            account = await self.pool.get_account(username) if username else None
+            cookies = account.cookies if account else {}
+            async with async_playwright() as p:
+                browser = await p.chromium.launch(proxy={"server": account_proxy} if account_proxy else None, headless=True)
+                context = await browser.new_context()
+                if cookies:
+                    await context.add_cookies([
+                        {"name": "ct0", "value": cookies.get("ct0", ""), "domain": ".x.com", "path": "/"},
+                        {"name": "auth_token", "value": cookies.get("auth_token", ""), "domain": ".x.com", "path": "/"},
+                    ])
+                page = await context.new_page()
+                await page.goto(tweet_url)
+                await asyncio.sleep(10)
+                await browser.close()
+                print(f"✅ Playwright перегляд твіта {tweet_url} акаунтом @{username}")
+                return True
+        except Exception as e:
+            print(f"❌ Playwright помилка перегляду твіта {tweet_id} акаунтом @{username}: {e}")
+            return False
+
 
 class TwitterAutomation:
     """Main automation class for managing multiple accounts and interactions."""
@@ -383,27 +439,21 @@ class TwitterAutomation:
                 async with semaphore:
                     try:
                         # Додаємо мінімальну затримку для переглядів
-                        if index > 0:
-                            delay = random.randint(15, 45)  # Збільшено затримку для безпеки
-                            await asyncio.sleep(delay)
-                        
-                        # Створюємо окремий API з проксі для цього акаунта
-                        actions_api = self.create_actions_api_for_account(account)
-                        success = await actions_api.view_tweet(tweet_id)
-                        
-                        if success:
-                            results["actions"]["views"] += 1
-                            print(f"✅ @{account} viewed the tweet")
-                            return True
-                        else:
-                            print(f"❌ @{account} failed to view the tweet")
-                            results["errors"].append(f"View failed for @{account}")
-                            return False
-                            
+                        for repeat in range(3):
+                            if index > 0 or repeat > 0:
+                                delay = random.randint(15, 45)
+                                await asyncio.sleep(delay)
+                            success = await self.interaction_api.playwright_view_tweet(tweet_id, username=account)
+                            if success:
+                                results["actions"]["views"] += 1
+                                print(f"✅ @{account} viewed the tweet (раз {repeat+1})")
+                            else:
+                                print(f"❌ @{account} failed to view the tweet (раз {repeat+1})")
+                                results["errors"].append(f"View failed for @{account} (раз {repeat+1})")
+                        return True
                     except Exception as e:
                         print(f"❌ Error with @{account} viewing: {e}")
                         results["errors"].append(f"View error for @{account}: {e}")
-                        return False
                         return False
             
             # Запускаємо всі перегляди паралельно

@@ -53,10 +53,10 @@ class Account(JSONTrait):
     def make_client(self, proxy: str | None = None) -> AsyncClient:
         proxies = [proxy, os.getenv("TWS_PROXY"), self.proxy]
         proxies = [x for x in proxies if x is not None]
-        proxy = proxies[0] if proxies else None
+        proxy_url = proxies[0] if proxies else None
 
         transport = AsyncHTTPTransport(retries=3)
-        client = AsyncClient(proxy=proxy, follow_redirects=True, transport=transport)
+        client = AsyncClient(proxies=proxy_url, follow_redirects=True, transport=transport)
 
         # saved from previous usage
         client.cookies.update(self.cookies)

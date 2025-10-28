@@ -93,7 +93,7 @@ class TwitterActionsAPI:
             # Використовуємо httpx з проксі конкретного акаунта
             async with httpx.AsyncClient(
                 cookies=cookies_dict,
-                proxy=account_proxy,  # Використовуємо проксі акаунта
+                proxies=account_proxy,  # Використовуємо проксі акаунта
                 timeout=30.0
             ) as client:
                 response = await client.post(

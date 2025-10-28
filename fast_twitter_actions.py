@@ -98,7 +98,7 @@ class FastTwitterActionsAPI:
         }
         
         # Використовуємо проксі для безпеки акаундів
-        async with httpx.AsyncClient(proxy=self.proxy, timeout=30.0) as client:
+        async with httpx.AsyncClient(proxies=self.proxy, timeout=30.0) as client:
             try:
                 response = await client.post(url, headers=headers, json=data)
                 
