@@ -1,0 +1,82 @@
+{
+  "RogerReed531051": {
+    "username": "RogerReed531051",
+    "assigned_proxy": "http://RQQ6C0VF:MZH4VXZU@154.16.76.9:49080",
+    "actual_ip": "154.16.76.9",
+    "proxy_ip": "154.16.76.9",
+    "working": true,
+    "error": null
+  },
+  "CarterTimo41180": {
+    "username": "CarterTimo41180",
+    "assigned_proxy": "http://RQQ6C0VF:MZH4VXZU@194.59.9.222:45950",
+    "actual_ip": "194.59.9.222",
+    "proxy_ip": "194.59.9.222",
+    "working": true,
+    "error": null
+  },
+  "JosephJame38932": {
+    "username": "JosephJame38932",
+    "assigned_proxy": "http://RQQ6C0VF:MZH4VXZU@146.103.8.106:46212",
+    "actual_ip": "146.103.8.106",
+    "proxy_ip": "146.103.8.106",
+    "working": true,
+    "error": null
+  },
+  "MorganW29933": {
+    "username": "MorganW29933",
+    "assigned_proxy": "http://RQQ6C0VF:MZH4VXZU@178.208.178.191:53189",
+    "actual_ip": "178.208.178.191",
+    "proxy_ip": "178.208.178.191",
+    "working": true,
+    "error": null
+  },
+  "AndrewCook55281": {
+    "username": "AndrewCook55281",
+    "assigned_proxy": "http://RQQ6C0VF:MZH4VXZU@141.11.206.125:45242",
+    "actual_ip": "141.11.206.125",
+    "proxy_ip": "141.11.206.125",
+    "working": true,
+    "error": null
+  },
+  "MichaelSco76203": {
+    "username": "MichaelSco76203",
+    "assigned_proxy": "http://RQQ6C0VF:MZH4VXZU@193.7.203.193:45378",
+    "actual_ip": "193.7.203.193",
+    "proxy_ip": "193.7.203.193",
+    "working": true,
+    "error": null
+  },
+  "StevenR33986": {
+    "username": "StevenR33986",
+    "assigned_proxy": "http://RQQ6C0VF:MZH4VXZU@45.141.20.211:48502",
+    "actual_ip": "45.141.20.211",
+    "proxy_ip": "45.141.20.211",
+    "working": true,
+    "error": null
+  },
+  "AndrewTurn19385": {
+    "username": "AndrewTurn19385",
+    "assigned_proxy": "http://RQQ6C0VF:MZH4VXZU@5.253.66.209:46480",
+    "actual_ip": "5.253.66.209",
+    "proxy_ip": "5.253.66.209",
+    "working": true,
+    "error": null
+  },
+  "AdamHughes30000": {
+    "username": "AdamHughes30000",
+    "assigned_proxy": "http://RQQ6C0VF:MZH4VXZU@93.123.101.159:47392",
+    "actual_ip": "93.123.101.159",
+    "proxy_ip": "93.123.101.159",
+    "working": true,
+    "error": null
+  },
+  "jenkins_jo33844": {
+    "username": "jenkins_jo33844",
+    "assigned_proxy": "http://RQQ6C0VF:MZH4VXZU@141.11.168.30:57284",
+    "actual_ip": "141.11.168.30",
+    "proxy_ip": "141.11.168.30",
+    "working": true,
+    "error": null
+  }
+}
