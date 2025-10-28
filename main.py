@@ -27,18 +27,21 @@ def load_env_file(file_path: str = "config.env"):
 
     def _load(path: str):
         nonlocal loaded_any
-        try:
-            with open(path, 'r') as f:
-                for line in f:
-                    line = line.strip()
-                    if line and not line.startswith('#') and '=' in line:
-                        key, value = line.split('=', 1)
-                        # Do not overwrite keys already set (allows .env to take precedence)
-                        os.environ.setdefault(key.strip(), value.strip())
-            print(f"✅ Завантажено конфіг з {path}")
-            loaded_any = True
-        except Exception as e:
-            print(f"⚠️ Не вдалося завантажити {path}: {e}")
+        encodings = ["utf-8", "cp1251", "windows-1252", "latin1"]
+        for enc in encodings:
+            try:
+                with open(path, 'r', encoding=enc) as f:
+                    for line in f:
+                        line = line.strip()
+                        if line and not line.startswith('#') and '=' in line:
+                            key, value = line.split('=', 1)
+                            os.environ.setdefault(key.strip(), value.strip())
+                print(f"✅ Завантажено конфіг з {path} (encoding: {enc})")
+                loaded_any = True
+                return
+            except Exception as e:
+                continue
+        print(f"⚠️ Не вдалося завантажити {path}: файл не вдалося прочитати у жодному з поширених кодувань.")
 
     # Prefer .env if present
     dotenv_path = os.path.join(os.path.dirname(__file__), '.env')

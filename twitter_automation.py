@@ -40,7 +40,7 @@ class TwitterInteractionAPI:
                 "Accept-Language": "en-US,en;q=0.9",
             }
             cookies = account.cookies if account else {}
-            async with httpx.AsyncClient(proxies=account_proxy, headers=headers, cookies=cookies, timeout=20.0) as client:
+            async with httpx.AsyncClient(proxy=account_proxy, headers=headers, cookies=cookies, timeout=20.0) as client:
                 response = await client.get(tweet_url)
                 if response.status_code == 200:
                     print(f"✅ Перегляд твіта {tweet_id} акаунтом @{username}")
@@ -439,7 +439,7 @@ class TwitterAutomation:
                 async with semaphore:
                     try:
                         # Додаємо мінімальну затримку для переглядів
-                        for repeat in range(3):
+                        for repeat in range(5):  # Збільшуємо до 5 повторів
                             if index > 0 or repeat > 0:
                                 delay = random.randint(15, 45)
                                 await asyncio.sleep(delay)

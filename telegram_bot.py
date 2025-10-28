@@ -74,7 +74,9 @@ class TwitterTelegramBot:
         self.automation = TwitterAutomation(self.api)
         self.processed_tweets = set()  # Track processed tweets to avoid duplicates
         self.last_processing_time = 0
-        
+
+        self.tweet_queue = asyncio.Queue()
+        self.queue_worker_started = False
     async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /start command."""
         user_id = update.effective_user.id
@@ -122,6 +124,11 @@ Drop a Twitter/X link and watch the magic happen! ✨
         total_accounts = len(accounts_info)
         active_count = len(active_accounts)
         inactive_count = total_accounts - active_count
+
+        # Запускаємо воркер якщо ще не запущено
+        if not self.queue_worker_started:
+            asyncio.create_task(self.queue_worker())
+            self.queue_worker_started = True
         
         status_text = f"""
 📊 **Bot Status**
@@ -156,7 +163,7 @@ Drop a Twitter/X link and watch the magic happen! ✨
         if not self.is_authorized(user_id, chat_id):
             await update.message.reply_text("❌ You are not authorized to use this bot.")
             return
-        
+
         stats_text = f"""
 📈 **Processing Statistics**
 
